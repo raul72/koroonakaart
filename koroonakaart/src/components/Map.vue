@@ -24,6 +24,20 @@ HighchartsMapModule(Highcharts);
 drilldown(Highcharts);
 dataModule(Highcharts);
 
+data.dataActiveInfectionsChangeByCounty = [];
+data.dataActiveInfectionsByCounty.map(county => {
+    let last = 0;
+    const newSequence = [];
+    county.sequence.map(value => {
+        newSequence.push(value - last);
+        last = value;
+    });
+    data.dataActiveInfectionsChangeByCounty.push({
+        ...county,
+        sequence: newSequence,
+    });
+});
+
 Highcharts.maps["mapEstonia"] = mapData;
 Highcharts.setOptions({ lang: { drillUpText: "◁ {series.drillUpText}" } });
 
@@ -84,8 +98,11 @@ export default {
                     newTitleText = vueRoot.$t("per10000");
                     break;
                   case "active":
-                    newTitleText = vueRoot.$t("active");
-                    break;
+                      newTitleText = vueRoot.$t("active");
+                      break;
+                  case "activediff":
+                      newTitleText = vueRoot.$t("activediff");
+                      break;
                   case "active100k":
                     newTitleText = vueRoot.$t("active100k");
                     break;
@@ -268,7 +285,23 @@ export default {
                     this.motion.updateToNewData();
                   },
                 },
+                {
+                    text: this.$t("activediff"),
+                    onclick: function() {
+                        this.options.chartType = "activediff";
 
+                        this.update({
+                            series: {
+                                data: data.dataActiveInfectionsChangeByCounty,
+                                dataLabels: {
+                                  format: "{point.MNIMI}<br/> {point.value}",
+                                },
+                            },
+                        });
+
+                        this.motion.updateToNewData();
+                    },
+                },
                 {
                   text: this.$t("activeCounty100k"),
                   onclick: function() {
@@ -540,6 +573,9 @@ export default {
         "active"
       );
       this.mapOptions.exporting.buttons.toggle.menuItems[3].text = this.$t(
+        "activediff"
+      );
+      this.mapOptions.exporting.buttons.toggle.menuItems[4].text = this.$t(
         "activeCounty100k"
       );
 

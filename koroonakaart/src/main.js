@@ -10,6 +10,9 @@ import exportingInit from "highcharts/modules/exporting";
 import stockInit from "highcharts/modules/stock";
 import offlineExporting from "highcharts/modules/offline-exporting";
 import exportData from "highcharts/modules/export-data";
+import * as Sentry from "@sentry/browser";
+import { Vue as VueIntegration } from "@sentry/integrations";
+import { Integrations } from "@sentry/tracing";
 
 import mapInit from "highcharts/modules/map";
 /* eslint-disable-next-line */
@@ -41,6 +44,22 @@ if (process.env.VUE_APP_GA_TRACKER) {
   });
 }
 
+if (process.env.VUE_APP_SENTRY_DNS) {
+  Sentry.init({
+    dsn: process.env.VUE_APP_SENTRY_DNS,
+    integrations: [
+      new VueIntegration({
+        Vue,
+        tracing: true,
+      }),
+      new Integrations.BrowserTracing(),
+    ],
+
+    // We recommend adjusting this value in production, or using tracesSampler
+    // for finer control
+    tracesSampleRate: 1.0,
+  });
+}
 
 export default new Vue({
   router,

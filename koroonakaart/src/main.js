@@ -32,11 +32,15 @@ Vue.use(HighchartsVue);
 
 Vue.config.productionTip = false;
 
+
 // Configuration VueAnalytics
-Vue.use(VueAnalytics, {
-  id: "UA-86124786-3",
-  router,
-});
+if (process.env.VUE_APP_GA_TRACKER) {
+  Vue.use(VueAnalytics, {
+    id: process.env.VUE_APP_GA_TRACKER,
+	router,
+  });
+}
+
 
 export default new Vue({
   router,

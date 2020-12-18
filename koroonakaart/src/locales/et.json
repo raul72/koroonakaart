@@ -58,6 +58,7 @@
   "typeOfData": "Vali andmestiku tüüp",
   "per10000": "10 000 elaniku kohta",
   "absolute": "Absoluutarv",
+  "absolutediff": "Absoluutarvu muutus",
   "positiveNegativeTitle": "Positiivsed ja negatiivsed testid maakonniti (%)",
   "unknown": "Teadmata",
   "footer1": "Koroonakaart.ee on loodud",

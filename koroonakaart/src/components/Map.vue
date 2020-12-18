@@ -38,6 +38,20 @@ data.dataActiveInfectionsByCounty.map(county => {
     });
 });
 
+data.dataInfectionsChangeByCounty = [];
+data.countyByDay.mapPlayback.map(county => {
+  let last = 0;
+  const newSequence = [];
+  county.sequence.map(value => {
+    newSequence.push(value - last);
+    last = value;
+  });
+  data.dataInfectionsChangeByCounty.push({
+    ...county,
+    sequence: newSequence,
+  });
+});
+
 Highcharts.maps["mapEstonia"] = mapData;
 Highcharts.setOptions({ lang: { drillUpText: "◁ {series.drillUpText}" } });
 
@@ -93,6 +107,9 @@ export default {
                 switch (this.options.chartType) {
                   case "absolute":
                     newTitleText = vueRoot.$t("absolute");
+                    break;
+                  case "absolutediff":
+                    newTitleText = vueRoot.$t("absolutediff");
                     break;
                   case "per10k":
                     newTitleText = vueRoot.$t("per10000");
@@ -252,6 +269,24 @@ export default {
                     this.update({
                       series: {
                         data: data.countyByDay.mapPlayback,
+                        dataLabels: {
+                          format: "{point.MNIMI}<br/> {point.value}",
+                        },
+                      },
+                    });
+
+                    this.motion.updateToNewData();
+                  },
+                },
+
+                {
+                  text: this.$t("absolutediff"),
+                  onclick: function() {
+                    this.options.chartType = "absolutediff";
+
+                    this.update({
+                      series: {
+                        data: data.dataInfectionsChangeByCounty,
                         dataLabels: {
                           format: "{point.MNIMI}<br/> {point.value}",
                         },
